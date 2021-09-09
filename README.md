@@ -2,6 +2,8 @@
 
 A stupid simple, powerful source code analyzer, targeting help you understand repo source code as quickly as possible.
 
+Most important, it's beautiful.
+
 ## Features
 
 ### Basic
