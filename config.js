@@ -14,7 +14,10 @@
 
 const config = {
   languages: ['./languages/'],
+  engine: {
+    port: 8888,
+    address: 'localhost',
+  },
 }
-
 
 module.exports = config
