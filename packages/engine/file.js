@@ -3,9 +3,12 @@
  *
  */
 
+const fs = require('fs')
 const fsPromises = require('fs').promises
 
 const excludeDirs = ['.git']
+
+// TODO: Add File class
 
 async function readFiles(filePath) {
   console.log(`Start process: ${filePath}`)
@@ -15,9 +18,21 @@ async function readFiles(filePath) {
 }
 
 async function readDirs(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    console.log(`Path: "${dirPath}" not existed`)
+    return
+  }
+
   let files = []
   const options = { withFileTypes: true, encoding: 'utf-8' }
-  const nodes = await fsPromises.readdir(dirPath, options)
+  const nodes = await fsPromises.readdir(dirPath, options).catch(err => {
+    console.log(err.message)
+    return []
+  })
+
+  if (!nodes.length) {
+    return
+  }
 
   for (const node of nodes) {
     const nodePath = `${dirPath}/${node.name}`

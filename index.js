@@ -7,11 +7,12 @@
 
 const commander = require('commander')
 const defaultConfig = require('./config.js')
-const mainFunc = require('./packages/engine/index.js')
+const Engine = require('./packages/engine/index.js')
 
 const program = new commander.Command()
 
 program.version('0.1.0')
+  .option('-r, --repo-path <source-code-repo>', 'Specify source code repo, default at current dir', '.')
   .option('-d, --debug', 'output extra debugging')
   .option('-h, --help', 'show this help info')
   .option('-c, --config-dir <config-dir-path>',
@@ -28,8 +29,9 @@ program.version('0.1.0')
 
 program.parse(process.argv)
 
-const options = program.opts()
+const clitOptions = program.opts()
 
-const { configDir } = options
+const finalConfig = { ...defaultConfig, ...clitOptions }
 
-mainFunc(configDir)
+const engine = new Engine(finalConfig)
+engine.run()

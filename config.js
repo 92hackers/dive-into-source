@@ -18,7 +18,8 @@ const config = {
     port: 8888,
     address: 'localhost',
   },
-  excludeDirs: ['.git'], // Or parse ignore dirs from .gitignore file
+  ignoreDirs: ['.git'], // Or parse ignore dirs from .gitignore file
+  ignoreDirsFiles: ['.gitignore'], // A file to include all ignore dirs
 }
 
 module.exports = config

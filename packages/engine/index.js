@@ -5,11 +5,20 @@
 
 const fileHandlers = require('./file')
 
-async function main(dirPath) {
-  const allFiles = await fileHandlers.readDirs(dirPath)
-  // const res = await fileHandlers.readFiles(path)
-  // console.log(res)
-  Promise.all(allFiles.map(filePath => fileHandlers.readFiles(filePath)))
+class Engine {
+  constructor(config) {
+    this.config = config
+    this.ctx = { config }
+  }
+
+  async run() {
+    const { repoPath } = this.config
+    const allFiles = await fileHandlers.readDirs(repoPath)
+    if (!allFiles) {
+      return
+    }
+    Promise.all(allFiles.map(filePath => fileHandlers.readFiles(filePath)))
+  }
 }
 
-module.exports = main
+module.exports = Engine
