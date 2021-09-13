@@ -8,7 +8,12 @@ const fileHandlers = require('./file')
 class Engine {
   constructor(config) {
     this.config = config
-    this.ctx = { config }
+    this.cache = {} // Cache feature result
+    this.ctx = {
+      config,
+      languages: [],
+      features: [],
+    }
   }
 
   async run() {

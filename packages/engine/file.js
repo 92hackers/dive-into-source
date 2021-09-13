@@ -4,6 +4,7 @@
  */
 
 const fs = require('fs')
+const path = require('path')
 const fsPromises = require('fs').promises
 
 /**
@@ -11,6 +12,10 @@ const fsPromises = require('fs').promises
  */
 async function analyzeFile(filePath) {
   console.log(`Start process: ${filePath}`)
+
+  const fileExtension = path.extname(filePath)
+  console.log(fileExtension)
+
   const content = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
   console.log(`End process: ${filePath}`)
   return content

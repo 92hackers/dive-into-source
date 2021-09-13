@@ -8,6 +8,10 @@
 const commander = require('commander')
 const defaultConfig = require('./config.js')
 const Engine = require('./packages/engine/index.js')
+const validateCliOptions = require('./cli/validate-options.js')
+
+const Languages = require('./packages/engine/language.js')
+const Features = require('./packages/engine/.js')
 
 const program = new commander.Command()
 
@@ -29,9 +33,15 @@ program.version('0.1.0')
 
 program.parse(process.argv)
 
-const clitOptions = program.opts()
+const cliOptions = program.opts()
+if (validateCliOptions(cliOptions) > 0) {
+  process.exit(1)
+}
 
-const finalConfig = { ...defaultConfig, ...clitOptions }
+const finalConfig = { ...defaultConfig, ...cliOptions }
+
+const { configDir } = finalConfig
+// TODO: parse configDir, which includes custom languages, features
 
 const engine = new Engine(finalConfig)
 engine.run()

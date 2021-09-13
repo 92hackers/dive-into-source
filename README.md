@@ -40,6 +40,10 @@ that's why dive-into-source came out!
 
 ## How i built it?
 
+## Design Features
+
+1. Fully extensible. you can write your own language to be accepted by dive-into-source. Besides, you can even write your own analyze feature.
+
 
 
 ## Getting Started

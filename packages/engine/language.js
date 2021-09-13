@@ -2,15 +2,23 @@
  * Handle languages
  */
 
-class Language {
-  constructor() {
-    console.log('Languages')
-    this.languages = []
+class Languages {
+  constructor(languageModules) {
+    this.languageModules = languageModules
+    this.languagesMap = new Map()
+    this.buildLanguagesMap()
   }
 
-  register(languages) {
-    console.log(languages)
+  buildLanguagesMap() {
+
+  }
+
+  /**
+   * Register languagesMap to engine
+   */
+  register(engine) {
+
   }
 }
 
-module.exports = Language
+module.exports = Languages
