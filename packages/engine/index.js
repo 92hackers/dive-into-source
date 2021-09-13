@@ -13,11 +13,12 @@ class Engine {
 
   async run() {
     const { repoPath } = this.config
-    const allFiles = await fileHandlers.readDirs(repoPath)
+    const excludeDirs = fileHandlers.getExcludedDirs(this.config)
+    const allFiles = await fileHandlers.readDirs(repoPath, excludeDirs)
     if (!allFiles) {
       return
     }
-    Promise.all(allFiles.map(filePath => fileHandlers.readFiles(filePath)))
+    Promise.all(allFiles.map(filePath => fileHandlers.analyzeFile(filePath)))
   }
 }
 
