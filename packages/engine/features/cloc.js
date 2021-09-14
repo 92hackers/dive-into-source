@@ -47,8 +47,9 @@ class ClocFeature {
         return
       }
       /* Check single-line style of multi-line comment */
-      if (blockCommentStartRegexp.test(line)
-          && blockCommentEndRegexp.test(line) && !isInBlockComment) {
+      if (blockCommentStartRegexp && blockCommentStartRegexp.test(line)
+          && blockCommentEndRegexp && blockCommentEndRegexp.test(line)
+          && !isInBlockComment) {
         targetStats.commentLinesCount += 1
         return
       }
