@@ -4,6 +4,10 @@
  */
 
 const fileHandlers = require('./file')
+const Language = require('./language.js')
+const languageModules = require('./languages')
+const Feature = require('./feature.js')
+const featureModules = require('./features')
 
 class Engine {
   constructor(config) {
@@ -11,9 +15,13 @@ class Engine {
     this.cache = {} // Cache feature result
     this.ctx = {
       config,
-      languages: [],
+      languagesMap: new Map(),
       features: [],
     }
+    const language = new Language(languageModules)
+    language.register(this)
+    const feature = new Feature(featureModules)
+    feature.register(this)
   }
 
   async run() {

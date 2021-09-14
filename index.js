@@ -10,9 +10,6 @@ const defaultConfig = require('./config.js')
 const Engine = require('./packages/engine/index.js')
 const validateCliOptions = require('./cli/validate-options.js')
 
-const Languages = require('./packages/engine/language.js')
-const Features = require('./packages/engine/.js')
-
 const program = new commander.Command()
 
 program.version('0.1.0')
