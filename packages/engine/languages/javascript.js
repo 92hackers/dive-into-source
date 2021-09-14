@@ -6,9 +6,6 @@ const Javascript = {
   id: 'Javascript',
   name: 'Javascript',
   ext: '.js',
-  lineCommentRegexp: /^\/\//,
-  blockCommentStartRegexp: /^\/\*/,
-  blockCommentEndRegexp: /\*\/$/, //  /* comment */ and  // comment
   lineSeparator: '\n',
 }
 

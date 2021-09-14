@@ -14,7 +14,6 @@ class Feature {
   }
 
   register(engine) {
-    // eslint-disable-next-line no-param-reassign
     engine.ctx.features = this.features
   }
 }

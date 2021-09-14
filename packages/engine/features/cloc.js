@@ -1,6 +1,12 @@
 /**
  * New Feature: Count lines of code
  *
+ * The source code of a file contains below three parts:
+ *
+ * 1. code
+ * 2. comment
+ * 3. blank lines
+ *
  */
 
 class ClocFeature {
@@ -38,6 +44,12 @@ class ClocFeature {
       // Check if is empty string
       if (!line) {
         targetStats.blankLinesCount += 1
+        return
+      }
+      /* Check single-line style of multi-line comment */
+      if (blockCommentStartRegexp.test(line)
+          && blockCommentEndRegexp.test(line) && !isInBlockComment) {
+        targetStats.commentLinesCount += 1
         return
       }
       // Check if is shebang

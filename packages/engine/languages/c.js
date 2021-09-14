@@ -8,7 +8,6 @@ const C = {
   id: 'c',
   name: 'C',
   ext: '.c',
-  commentRegexp: [/\\*.*?\*\//, /\/\//], //  /* comment */ and  // comment
   lineSeparator: '\n',
 }
 
