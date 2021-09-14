@@ -14,6 +14,8 @@ class Engine {
     this.config = config
     this.cache = {} // Cache feature result
     this.ctx = {
+      totalFilesCount: 0,
+      ignoredFilesCount: 0,
       config,
       languagesMap: new Map(),
       features: [],
@@ -31,7 +33,17 @@ class Engine {
     if (!allFiles) {
       return
     }
-    Promise.all(allFiles.map(filePath => fileHandlers.analyzeFile(filePath)))
+    this.ctx.totalFilesCount = allFiles
+    await Promise.all(allFiles.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
+    this.report()
+  }
+
+  report() {
+    this.ctx.features.forEach((feature) => {
+      console.log(`${feature.name} -----------------`)
+      console.log(feature.stats)
+      console.log('---------------- -----------------')
+    })
   }
 }
 

@@ -44,6 +44,7 @@
     "object-property-newline": 0,
     "space-before-function-paren": 0,
     "import/no-extraneous-dependencies": 0,
-    "no-useless-escape": 0
+    "no-useless-escape": 0,
+    "no-param-reassign": 0
   }
 }

@@ -9,7 +9,7 @@ const C = {
   name: 'C',
   ext: '.c',
   commentRegexp: [/\\*.*?\*\//, /\/\//], //  /* comment */ and  // comment
-  lineSeparator: /\\n/,
+  lineSeparator: '\n',
 }
 
 module.exports = C

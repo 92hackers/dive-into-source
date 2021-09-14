@@ -4,10 +4,12 @@
 
 const Javascript = {
   id: 'Javascript',
-  name: 'javascript',
+  name: 'Javascript',
   ext: '.js',
-  commentRegexp: [/\\*.*?\*\//, /\/\//], //  /* comment */ and  // comment
-  lineSeparator: /\\n/,
+  lineCommentRegexp: /^\/\//,
+  blockCommentStartRegexp: /^\/\*/,
+  blockCommentEndRegexp: /\*\/$/, //  /* comment */ and  // comment
+  lineSeparator: '\n',
 }
 
 module.exports = Javascript

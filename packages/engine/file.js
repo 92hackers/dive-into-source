@@ -10,15 +10,15 @@ const fsPromises = require('fs').promises
 /**
  * Analyze file
  */
-async function analyzeFile(filePath) {
-  console.log(`Start process: ${filePath}`)
-
-  const fileExtension = path.extname(filePath)
-  console.log(fileExtension)
-
+async function analyzeFile(filePath, engineCtx) {
+  const { languagesMap, features } = engineCtx
+  const matchLanguage = languagesMap.get(path.extname(filePath))
+  if (matchLanguage === undefined) {
+    engineCtx.ignoredFilesCount += 1
+    return
+  }
   const content = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
-  console.log(`End process: ${filePath}`)
-  return content
+  await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
 }
 
 /**
