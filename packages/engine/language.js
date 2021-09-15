@@ -17,7 +17,14 @@ class Language {
         return
       }
       // Select language file extension as map key
-      this.languagesMap.set(languageModule.ext, { ...Default, ...languageModule })
+      // multi-extensions could point to same kind of file type
+      const mergedLanguage = { ...Default, ...languageModule }
+      const fileExtensions = languageModule.ext
+      if (typeof fileExtensions === 'string') {
+        this.languagesMap.set(fileExtensions, mergedLanguage)
+      } else if (Array.isArray(fileExtensions)) {
+        fileExtensions.forEach(ext => this.languagesMap.set(ext, mergedLanguage))
+      }
     })
   }
 
