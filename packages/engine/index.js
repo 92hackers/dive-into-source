@@ -45,7 +45,7 @@ class Engine {
     console.log('---------------------------------')
     this.ctx.features.forEach((feature) => {
       console.log(`${feature.name} -----------------`)
-      console.log(feature.stats)
+      feature.report()
       console.log('---------------- -----------------')
     })
   }

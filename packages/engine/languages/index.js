@@ -10,6 +10,7 @@ const Javascript = require('./javascript')
 const Html = require('./html')
 const Css = require('./css')
 const Python = require('./python')
+const Java = require('./java')
 
 module.exports = {
   Default,
@@ -19,4 +20,5 @@ module.exports = {
   Html,
   Css,
   Python,
+  Java,
 }

@@ -25,6 +25,16 @@ class ClocFeature {
     }
   }
 
+  /**
+   * Report stats
+   */
+  report() {
+    const statsDataPairsArray = Array.from(this.stats.entries())
+    // Format of data pair: [language, linesCountDataObj]
+    statsDataPairsArray.sort((data1, data2) => data2[1].codeLinesCount - data1[1].codeLinesCount)
+    console.log(statsDataPairsArray)
+  }
+
   async run({ matchLanguage, content }) {
     const {
       name, blockCommentEndRegexp, blockCommentStartRegexp,
