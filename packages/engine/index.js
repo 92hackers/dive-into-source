@@ -33,12 +33,16 @@ class Engine {
     if (!allFiles) {
       return
     }
-    this.ctx.totalFilesCount = allFiles
+    this.ctx.totalFilesCount = allFiles.length
     await Promise.all(allFiles.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
     this.report()
   }
 
   report() {
+    console.log('-------- Summary ----------------')
+    console.log(`Total files: ${this.ctx.totalFilesCount}`)
+    console.log(`Ignored files: ${this.ctx.ignoredFilesCount}`)
+    console.log('---------------------------------')
     this.ctx.features.forEach((feature) => {
       console.log(`${feature.name} -----------------`)
       console.log(feature.stats)
