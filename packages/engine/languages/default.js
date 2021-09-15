@@ -7,6 +7,7 @@ const Default = {
   name: 'default',
   lineSeparator: '\n',
   shebangRegexp: /^\s*?#!.*/,
+
   lineCommentRegexp: /^\s*?\/\//, // -> Single line comment //
   blockCommentStartRegexp: /^\s*?\/\*/, // -> STart of multi-line comment part /*
   blockCommentEndRegexp: /\*\//, // -> End of multi-line comment part  */

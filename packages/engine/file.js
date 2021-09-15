@@ -41,6 +41,7 @@ async function readDirs(dirPath, excludeDirs) {
     return
   }
 
+  // TODO: Promise.all
   for (const node of nodes) {
     const nodePath = `${dirPath}/${node.name}`
     if (node.isDirectory()) {

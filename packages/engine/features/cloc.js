@@ -38,18 +38,26 @@ class ClocFeature {
 
     targetStats.filesCount += 1
 
+    // TODO: Case: comments in string
+    // TODO: Case: regexp mismatch
+
     const linesContent = content.split(matchLanguage.lineSeparator)
     let isInBlockComment = false
     linesContent.forEach((line) => {
       // Check if is empty string
       if (!line) {
+        if (isInBlockComment) {
+          targetStats.commentLinesCount += 1
+          return
+        }
         targetStats.blankLinesCount += 1
         return
       }
       /* Check single-line style of multi-line comment */
+      /* Start part should not be the same as end part */
       if (blockCommentStartRegexp && blockCommentStartRegexp.test(line)
-          && blockCommentEndRegexp && blockCommentEndRegexp.test(line)
-          && !isInBlockComment) {
+          && !isInBlockComment && blockCommentEndRegexp
+          && blockCommentEndRegexp.test(line.replace(blockCommentStartRegexp, ''))) {
         targetStats.commentLinesCount += 1
         return
       }
@@ -70,7 +78,7 @@ class ClocFeature {
         return
       }
       // Check if the start of block comment
-      if (blockCommentStartRegexp && blockCommentStartRegexp.test(line)) {
+      if (blockCommentStartRegexp && blockCommentStartRegexp.test(line) && !isInBlockComment) {
         targetStats.commentLinesCount += 1
         isInBlockComment = true
         return

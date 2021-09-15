@@ -25,7 +25,7 @@ class Language {
    * Register languagesMap to engine
    */
   register(engine) {
-    engine.ctx.languagesMap = this.languagesMap // eslint-disable-line no-param-reassign
+    engine.ctx.languagesMap = this.languagesMap
   }
 }
 
