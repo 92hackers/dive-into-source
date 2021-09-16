@@ -9,10 +9,11 @@ const commander = require('commander')
 const defaultConfig = require('./config.js')
 const Engine = require('./packages/engine/index.js')
 const validateCliOptions = require('./cli/validate-options.js')
+const packageJson = require('./package.json')
 
 const program = new commander.Command()
 
-program.version('0.1.0')
+program.version(packageJson.version)
   .option('-r, --repo-path <source-code-repo>', 'Specify source code repo, default at current dir', '.')
   .option('-d, --debug', 'output extra debugging')
   .option('-h, --help', 'show this help info')
