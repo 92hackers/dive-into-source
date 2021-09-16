@@ -11,9 +11,6 @@ const fsPromises = require('fs').promises
  * Analyze file
  */
 async function analyzeFile(filePath, engineCtx) {
-  if (!filePath) {
-    return
-  }
   const { languagesMap, features } = engineCtx
   const matchLanguage = languagesMap.get(path.extname(filePath))
   if (matchLanguage === undefined) {
@@ -30,33 +27,30 @@ async function analyzeFile(filePath, engineCtx) {
 async function readDirs(dirPath, excludeDirs) {
   if (!fs.existsSync(dirPath)) {
     console.log(`Path: "${dirPath}" not existed`)
-    return
+    return []
   }
 
-  let files = []
+  const files = []
+  const dirs = []
   const options = { withFileTypes: true, encoding: 'utf-8' }
   const nodes = await fsPromises.readdir(dirPath, options).catch(err => {
     console.log(err.message)
     return []
   })
 
-  if (!nodes.length) {
-    return
-  }
-
-  // TODO: Promise.all
-  for (const node of nodes) {
+  nodes.forEach((node) => {
     const nodePath = `${dirPath}/${node.name}`
     if (node.isDirectory()) {
       if (!excludeDirs.has(node.name)) {
-        files = files.concat(await readDirs(nodePath, excludeDirs))
+        dirs.push(nodePath)
       }
     } else if (node.isFile()) {
       files.push(nodePath)
     }
-  }
+  })
 
-  return files
+  const nestedFiles = await Promise.all(dirs.map(dir => readDirs(dir, excludeDirs)))
+  return files.concat(...nestedFiles)
 }
 
 /**

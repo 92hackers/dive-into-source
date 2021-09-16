@@ -32,7 +32,7 @@ class Engine {
     const { repoPath } = this.config
     const excludeDirs = fileHandlers.getExcludedDirs(this.config)
     const allFiles = await fileHandlers.readDirs(repoPath, excludeDirs)
-    if (!allFiles) {
+    if (!allFiles.length) {
       return
     }
     console.log(`Total ${allFiles.length} files found, start analyzing...`)
