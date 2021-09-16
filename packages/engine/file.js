@@ -11,6 +11,9 @@ const fsPromises = require('fs').promises
  * Analyze file
  */
 async function analyzeFile(filePath, engineCtx) {
+  if (!filePath) {
+    return
+  }
   const { languagesMap, features } = engineCtx
   const matchLanguage = languagesMap.get(path.extname(filePath))
   if (matchLanguage === undefined) {

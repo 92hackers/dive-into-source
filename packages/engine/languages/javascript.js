@@ -5,7 +5,7 @@
 const Javascript = {
   id: 'Javascript',
   name: 'Javascript',
-  ext: '.js',
+  ext: ['.js', '.jsx'],
   lineSeparator: '\n',
 }
 
