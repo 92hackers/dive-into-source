@@ -6,6 +6,9 @@
   "repository": "https://github.com/92hackers/dive-into-source",
   "author": "92hackers",
   "license": "MIT",
+  "bin": {
+    "divesource": "./index.js"
+  },
   "scripts": {
     "test": "jest",
     "lint": "eslint ."

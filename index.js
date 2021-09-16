@@ -36,9 +36,5 @@ if (validateCliOptions(cliOptions) > 0) {
 }
 
 const finalConfig = { ...defaultConfig, ...cliOptions }
-
-const { configDir } = finalConfig
-// TODO: parse configDir, which includes custom languages, features
-
 const engine = new Engine(finalConfig)
 engine.run()
