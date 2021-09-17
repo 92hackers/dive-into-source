@@ -26,6 +26,7 @@ const Ruby = require('./ruby')
 const Sql = require('./sql')
 const Swift = require('./swift')
 const Vue = require('./vue')
+const Yaml = require('./yaml')
 
 module.exports = {
   Default,
@@ -51,4 +52,5 @@ module.exports = {
   Sql,
   Swift,
   Vue,
+  Yaml,
 }
