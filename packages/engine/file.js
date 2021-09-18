@@ -3,7 +3,6 @@
  *
  */
 
-const fs = require('fs')
 const path = require('path')
 const fsPromises = require('fs').promises
 
@@ -17,19 +16,24 @@ async function analyzeFile(filePath, engineCtx) {
     engineCtx.ignoredFilesCount += 1
     return
   }
-  const content = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
+  const fd = await fsPromises.open(filePath, 'r').catch(err => {
+    if (err.code === 'EMFILE') { // If too many open files error, try again later
+      return ''
+    }
+    throw err // Throw out rest errors
+  })
+  if (!fd) {
+    return filePath // Return file path back to try again later
+  }
+  const content = await fd.readFile({ encoding: 'utf-8' })
   await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
+  fd.close() // Close fd to release file descriptors
 }
 
 /**
  * Read source code repo dirs to get all files
  */
 async function readDirs(dirPath, excludeDirs) {
-  if (!fs.existsSync(dirPath)) {
-    console.log(`Path: "${dirPath}" not existed`)
-    return []
-  }
-
   const files = []
   const dirs = []
   const options = { withFileTypes: true, encoding: 'utf-8' }
