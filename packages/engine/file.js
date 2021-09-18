@@ -3,7 +3,6 @@
  *
  */
 
-const fs = require('fs')
 const path = require('path')
 const fsPromises = require('fs').promises
 
@@ -19,17 +18,13 @@ async function analyzeFile(filePath, engineCtx) {
   }
   const content = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
   await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
+  engineCtx.analyzedFilesMap.set(filePath, 1)
 }
 
 /**
  * Read source code repo dirs to get all files
  */
 async function readDirs(dirPath, excludeDirs) {
-  if (!fs.existsSync(dirPath)) {
-    console.log(`Path: "${dirPath}" not existed`)
-    return []
-  }
-
   const files = []
   const dirs = []
   const options = { withFileTypes: true, encoding: 'utf-8' }
