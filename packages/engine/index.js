@@ -16,8 +16,6 @@ class Engine {
     this.config = config
     this.cache = {}
     this.secondsConsumed = 0
-    // The all files array will be split into groups specified by this number
-    this.divideNumber = 1
     this.maxTries = 10
     this.ctx = {
       totalFilesCount: 0,
@@ -25,7 +23,6 @@ class Engine {
       config,
       languagesMap: new Map(),
       features: [],
-      analyzedFilesMap: new Map(), // Store analyzed files
     }
     const language = new Language(languageModules)
     language.register(this)
@@ -47,38 +44,21 @@ class Engine {
     if (!allFilesCount) {
       return
     }
-    console.log(`Total ${allFilesCount} files found, start analyzing...`)
     this.ctx.totalFilesCount = allFilesCount
+    console.log(`Total ${allFilesCount} files found, start analyzing...`)
 
-    let sliceCount = 0
+    let filesToProcess = allFiles
     while (1) {
-      // Filter out analyzed files
-      const restFiles = this.divideNumber > 1
-        ? allFiles.filter(filePath => !this.ctx.analyzedFilesMap.get(filePath))
-        : allFiles
-      const sliceSize = restFiles.length / this.divideNumber // One slice size of all slice groups
-
-      try {
-        while (1) {
-          const slicedFiles = restFiles.slice(sliceSize * sliceCount, sliceSize * (sliceCount + 1))
-          if (!slicedFiles.length) { // No more slice files to analyze
-            break
-          }
-
-          // eslint-disable-next-line max-len, no-await-in-loop
-          await Promise.all(slicedFiles.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
-          sliceCount += 1
-        }
-
-        break // Normal exit
-      } catch (err) {
-        console.log(err)
-        console.log('Try again')
-        this.divideNumber += 1
-        this.maxTries -= 1
-        sliceCount = 0
+      // eslint-disable-next-line max-len, no-await-in-loop
+      const restFiles = await Promise.all(filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
+      if (!restFiles.length) { // No more files to process
+        console.log('no more files to process, break')
+        break
       }
+      filesToProcess = restFiles.filter(item => item)
+      console.log(filesToProcess)
 
+      this.maxTries -= 1
       if (!this.maxTries) { // Max tries reached, exit
         break
       }
@@ -93,8 +73,6 @@ class Engine {
   report() {
     this.summaryReport()
     this.featuresReport()
-    // console.log(this.ctx.analyzedFilesMap)
-    console.log(this.divideNumber)
   }
 
   summaryReport() {

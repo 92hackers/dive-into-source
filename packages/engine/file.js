@@ -16,9 +16,18 @@ async function analyzeFile(filePath, engineCtx) {
     engineCtx.ignoredFilesCount += 1
     return
   }
-  const content = await fsPromises.readFile(filePath, { encoding: 'utf-8' })
+  const fd = await fsPromises.open(filePath, 'r').catch(err => {
+    if (err.code === 'EMFILE') { // If too many open files error, try again later
+      return ''
+    }
+    throw err // Throw out rest errors
+  })
+  if (!fd) {
+    return filePath // Return file path back to try again later
+  }
+  const content = await fd.readFile({ encoding: 'utf-8' })
   await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
-  engineCtx.analyzedFilesMap.set(filePath, 1)
+  fd.close() // Close fd to release file descriptors
 }
 
 /**
