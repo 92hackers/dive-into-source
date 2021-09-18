@@ -48,15 +48,13 @@ class Engine {
     console.log(`Total ${allFilesCount} files found, start analyzing...`)
 
     let filesToProcess = allFiles
-    while (1) {
+    while (1) { // eslint-disable-line no-constant-condition
       // eslint-disable-next-line max-len, no-await-in-loop
       const restFiles = await Promise.all(filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
       if (!restFiles.length) { // No more files to process
-        console.log('no more files to process, break')
         break
       }
       filesToProcess = restFiles.filter(item => item)
-      console.log(filesToProcess)
 
       this.maxTries -= 1
       if (!this.maxTries) { // Max tries reached, exit
@@ -87,7 +85,7 @@ class Engine {
     this.ctx.features.forEach((feature) => {
       console.log(`${feature.name} -----------------`)
       feature.report()
-      console.log('---------------- -----------------')
+      console.log('----------------------------------')
     })
   }
 }
