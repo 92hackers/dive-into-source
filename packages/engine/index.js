@@ -16,7 +16,6 @@ class Engine {
     this.config = config
     this.cache = {}
     this.secondsConsumed = 0
-    this.maxTries = 10
     this.ctx = {
       totalFilesCount: 0,
       ignoredFilesCount: 0,
@@ -47,25 +46,29 @@ class Engine {
     this.ctx.totalFilesCount = allFilesCount
     console.log(`Total ${allFilesCount} files found, start analyzing...`)
 
-    let filesToProcess = allFiles
-    while (1) { // eslint-disable-line no-constant-condition
-      // eslint-disable-next-line max-len, no-await-in-loop
-      const restFiles = await Promise.all(filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx)))
-      if (!restFiles.length) { // No more files to process
-        break
-      }
-      filesToProcess = restFiles.filter(item => item)
-
-      this.maxTries -= 1
-      if (!this.maxTries) { // Max tries reached, exit
-        break
-      }
-    }
+    await this.analyze(allFiles)
 
     const end = new Date()
     this.secondsConsumed = (end - start) / 1000
 
     this.report()
+  }
+
+  async analyze(allFiles) {
+    let maxTries = 10
+    let filesToProcess = allFiles
+    while (1) { // eslint-disable-line no-constant-condition
+      const tasks = filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx))
+      const restFiles = await Promise.all(tasks) // eslint-disable-line no-await-in-loop
+      if (!restFiles.length) { // No more files to process
+        break
+      }
+      filesToProcess = restFiles.filter(item => item)
+      maxTries -= 1
+      if (!maxTries) { // Max tries reached, exit
+        break
+      }
+    }
   }
 
   report() {
