@@ -5,7 +5,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const fileHandlers = require('./file')
+const File = require('./file')
 const Language = require('./language.js')
 const languageModules = require('./languages')
 const Feature = require('./feature.js')
@@ -13,7 +13,6 @@ const featureModules = require('./features')
 
 class Engine {
   constructor(config) {
-    this.config = config
     this.cache = {}
     this.secondsConsumed = 0
     this.ctx = {
@@ -22,6 +21,7 @@ class Engine {
       config,
       languagesMap: new Map(),
       features: [],
+      repoPath: '',
     }
     const language = new Language(languageModules)
     language.register(this)
@@ -31,14 +31,23 @@ class Engine {
 
   async run() {
     const start = new Date()
-    const { repoPath } = this.config
+
+    // Validate repo path
+    const { repoPath } = this.ctx.config
     const dirPath = path.resolve(repoPath)
     if (!fs.existsSync(dirPath)) {
       console.log(`Path: "${repoPath}" not existed`)
       return
     }
-    const excludeDirs = fileHandlers.getExcludedDirs(this.config)
-    const allFiles = await fileHandlers.readDirs(dirPath, excludeDirs)
+    this.ctx.repoPath = dirPath
+
+    const fileHandlers = new File(this.ctx)
+
+    // Wait for file ignore rules parsed.
+    await fileHandlers.addIgnoreRules()
+
+    // Get all files
+    const allFiles = await fileHandlers.readDir(dirPath)
     const allFilesCount = allFiles.length
     if (!allFilesCount) {
       return
@@ -46,7 +55,8 @@ class Engine {
     this.ctx.totalFilesCount = allFilesCount
     console.log(`Total ${allFilesCount} files found, start analyzing...`)
 
-    await this.analyze(allFiles)
+    // Analyze
+    await this.analyze(allFiles, fileHandlers)
 
     const end = new Date()
     this.secondsConsumed = (end - start) / 1000
@@ -54,11 +64,11 @@ class Engine {
     this.report()
   }
 
-  async analyze(allFiles) {
+  async analyze(allFiles, fileHandlers) {
     let maxTries = 10
     let filesToProcess = allFiles
     while (1) { // eslint-disable-line no-constant-condition
-      const tasks = filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath, this.ctx))
+      const tasks = filesToProcess.map(filePath => fileHandlers.analyzeFile(filePath))
       const restFiles = await Promise.all(tasks) // eslint-disable-line no-await-in-loop
       if (!restFiles.length) { // No more files to process
         break

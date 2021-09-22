@@ -19,7 +19,7 @@ const config = {
     address: 'localhost',
   },
   ignoreDirs: ['.git'], // Or parse ignore dirs from .gitignore file
-  ignoreDirsFiles: ['.gitignore'], // A file to include all ignore dirs
+  gitIgnoreFilePath: '.gitignore', // The path for .gitignore file
 }
 
 module.exports = config
