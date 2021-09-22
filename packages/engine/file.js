@@ -85,6 +85,9 @@ class File {
     this.gitIgnoreManager.add(ignoreDirs)
 
     // Process .gitignore file
+    if (!gitIgnoreFilePath) {
+      return
+    }
     const ignoreFileAbsolutePath = path.resolve(repoPath, gitIgnoreFilePath)
     const gitIgnoreFile = await fsPromises.readFile(ignoreFileAbsolutePath, 'utf-8').catch(() => {
       console.warn(`.gitignore file not found in dir: ${repoPath}, No .gitignore file will be parsed!`)
