@@ -5,81 +5,99 @@
 
 const path = require('path')
 const fsPromises = require('fs').promises
+const ignore = require('ignore')
 
-/**
- * Analyze file
- */
-async function analyzeFile(filePath, engineCtx) {
-  const { languagesMap, features } = engineCtx
-  const matchLanguage = languagesMap.get(path.extname(filePath))
-  if (matchLanguage === undefined) {
-    engineCtx.ignoredFilesCount += 1
-    return
+class File {
+  constructor(engineCtx) {
+    this.engineCtx = engineCtx
+    this.gitIgnoreManager = ignore()
   }
-  const fd = await fsPromises.open(filePath, 'r').catch(err => {
-    if (err.code === 'EMFILE') { // If too many open files error, try again later
-      return ''
+
+  /**
+   * Analyze file
+   */
+  async analyzeFile(filePath) {
+    const { languagesMap, features } = this.engineCtx
+
+    const matchLanguage = languagesMap.get(path.extname(filePath))
+    if (matchLanguage === undefined) {
+      this.engineCtx.ignoredFilesCount += 1
+      return
     }
-    throw err // Throw out rest errors
-  })
-  if (!fd) {
-    return filePath // Return file path back to try again later
-  }
-  const content = await fd.readFile({ encoding: 'utf-8' })
-  await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
-  fd.close() // Close fd to release file descriptors
-}
 
-/**
- * Read source code repo dirs to get all files
- */
-async function readDirs(dirPath, excludeDirs) {
-  const files = []
-  const dirs = []
-  const options = { withFileTypes: true, encoding: 'utf-8' }
-  const nodes = await fsPromises.readdir(dirPath, options).catch(err => {
-    console.log(err.message)
-    return []
-  })
-
-  nodes.forEach((node) => {
-    const nodePath = `${dirPath}/${node.name}`
-    if (node.isDirectory()) {
-      if (!excludeDirs.has(node.name)) {
-        dirs.push(nodePath)
+    const fd = await fsPromises.open(filePath, 'r').catch(err => {
+      if (err.code === 'EMFILE') { // If too many open files error, try again later
+        return ''
       }
-    } else if (node.isFile()) {
-      files.push(nodePath)
+      throw err // Throw out rest errors
+    })
+    if (!fd) {
+      return filePath // Return file path back to try again later
     }
-  })
 
-  const nestedFiles = await Promise.all(dirs.map(dir => readDirs(dir, excludeDirs)))
-  return files.concat(...nestedFiles)
-}
-
-/**
- * Get exclude dirs,
- *
- * @return excludeDirs {Set}
- */
-function getExcludedDirs(config) {
-  const { ignoreDirs, ignoreDirsFiles } = config
-  let excludeDirs = new Set()
-
-  if (!ignoreDirs) {
-    return excludeDirs
+    const content = await fd.readFile({ encoding: 'utf-8' })
+    await Promise.all(features.map(feature => feature.run({ matchLanguage, content })))
+    fd.close() // Close fd to release file descriptors
   }
 
-  if (Array.isArray(ignoreDirs) && ignoreDirs.length > 0) {
-    excludeDirs = new Set(ignoreDirs)
+  /**
+   * Read source code repo dir to get all files
+   */
+  async readDir(dirPath) {
+    const files = []
+    const dirs = []
+    const options = { withFileTypes: true, encoding: 'utf-8' }
+    const nodes = await fsPromises.readdir(dirPath, options).catch(err => {
+      console.log(err.message)
+      return []
+    })
+
+    nodes.forEach((node) => {
+      const nodePath = `${dirPath}/${node.name}`
+
+      // Filter ignored files
+      const relativeToRootPath = path.relative(this.engineCtx.repoPath, nodePath)
+      if (this.gitIgnoreManager.ignores(relativeToRootPath)) {
+        return
+      }
+
+      if (node.isDirectory()) {
+        dirs.push(nodePath)
+      } else if (node.isFile()) {
+        files.push(nodePath)
+      }
+    })
+
+    const nestedFiles = await Promise.all(dirs.map(dir => this.readDir(dir)))
+    return files.concat(...nestedFiles)
   }
 
-  // TODO: parse .gitignore file
-  return excludeDirs
+  /**
+   * Add ignore path rules
+   *
+   * Parse ignoreDirs and .gitignore file
+   */
+  async addIgnoreRules() {
+    const { ignoreDirs, gitIgnoreFilePath } = this.engineCtx.config
+    const { repoPath } = this.engineCtx
+
+    // Process ignoreDirs
+    this.gitIgnoreManager.add(ignoreDirs)
+
+    // Process .gitignore file
+    if (!gitIgnoreFilePath) {
+      return
+    }
+    const ignoreFileAbsolutePath = path.resolve(repoPath, gitIgnoreFilePath)
+    const gitIgnoreFile = await fsPromises.readFile(ignoreFileAbsolutePath, 'utf-8').catch(() => {
+      console.warn(`.gitignore file not found in dir: ${repoPath}, No .gitignore file will be parsed!`)
+    })
+    if (gitIgnoreFile) {
+      console.log(`The .gitignore file: ${ignoreFileAbsolutePath} found.`)
+      console.log('All files and dirs listed in the file will be ignored.')
+    }
+    this.gitIgnoreManager.add(gitIgnoreFile)
+  }
 }
 
-module.exports = {
-  analyzeFile,
-  readDirs,
-  getExcludedDirs,
-}
+module.exports = File
