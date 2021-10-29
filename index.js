@@ -11,7 +11,17 @@ const Engine = require('./packages/engine/index.js')
 // const validateCliOptions = require('./cli/validate-options.js')
 const packageJson = require('./package.json')
 
-const argvMap = parseArgs(process.argv.slice(2))
+const argvMap = parseArgs(process.argv.slice(2), {
+  alias: {
+    c: 'config',
+    d: 'debug',
+    s: 'signal',
+    p: 'port',
+    a: 'address',
+    v: 'version',
+    h: 'help',
+  },
+})
 
 const defaultRepoPath = './' // Default, We analyze files of curent dir
 const { version } = packageJson
@@ -43,37 +53,24 @@ function processArgs(argv) {
   const repoPath = argv._[0] || defaultRepoPath
   cliOptions = { repoPath }
 
-  if (argv.h || argv.help) { // show help page and exit
+  if (argv.help) { // show help page and exit
     console.log(printHelpMessage())
     exit()
   }
 
-  if (argv.v || argv.version) { // show version and exit
+  if (argv.version) { // show version and exit
     console.log(version)
     exit()
   }
 
-  if (argv.c || argv.config) {
-    cliOptions.configDir = argv.c || argv.config
+  return {
+    ...cliOptions,
+    configDir: argv.config,
+    debug: argv.debug,
+    signal: argv.signal,
+    port: argv.port,
+    address: argv.address,
   }
-
-  if (argv.d || argv.debug) {
-    cliOptions.debug = true
-  }
-
-  if (argv.s || argv.signal) {
-    cliOptions.signal = argv.s || argv.signal
-  }
-
-  if (argv.p || argv.port) {
-    cliOptions.port = argv.p || argv.port
-  }
-
-  if (argv.a || argv.address) {
-    cliOptions.address = argv.a || argv.address
-  }
-
-  return cliOptions
 }
 
 const cliOptions = processArgs(argvMap)
