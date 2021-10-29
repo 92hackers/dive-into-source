@@ -16,8 +16,7 @@ test('Get excluded dirs from ignoreDirs', async () => {
 })
 
 test('Make sure readDirs function always return array []', async () => {
-  const fakeEngineCtx = {}
-  const fileHandlers = new File(fakeEngineCtx)
+  const fileHandlers = new File({ config: {} })
   const allFiles = await fileHandlers.readDir('./xxx')
   expect(Array.isArray(allFiles)).toBe(true)
   expect(allFiles.length).toBe(0)

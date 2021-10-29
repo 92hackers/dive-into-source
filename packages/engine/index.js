@@ -24,8 +24,10 @@ class Engine {
       repoPath: '',
     }
     const language = new Language(languageModules)
+    Object.seal(language)
     language.register(this)
     const feature = new Feature(featureModules)
+    Object.seal(feature)
     feature.register(this)
   }
 
@@ -42,9 +44,6 @@ class Engine {
     this.ctx.repoPath = dirPath
 
     const fileHandlers = new File(this.ctx)
-
-    // Wait for file ignore rules parsed.
-    await fileHandlers.addIgnoreRules()
 
     // Get all files
     const allFiles = await fileHandlers.readDir(dirPath)
