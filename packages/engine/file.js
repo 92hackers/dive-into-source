@@ -44,32 +44,42 @@ class File {
    * Read source code repo dir to get all files
    */
   async readDir(dirPath) {
-    const files = []
-    const dirs = []
-    const options = { withFileTypes: true, encoding: 'utf-8' }
-    const nodes = await fsPromises.readdir(dirPath, options).catch(err => {
-      console.log(err.message)
-      return []
-    })
+    const self = this
 
-    nodes.forEach((node) => {
-      const nodePath = `${dirPath}/${node.name}`
+    // Wait for file ignore rules parsed.
+    await this.addIgnoreRules()
 
-      // Filter ignored files
-      const relativeToRootPath = path.relative(this.engineCtx.repoPath, nodePath)
-      if (this.gitIgnoreManager.ignores(relativeToRootPath)) {
-        return
-      }
+    async function readDirRecursive(dir) {
+      const files = []
+      const dirs = []
+      const options = { withFileTypes: true, encoding: 'utf-8' }
+      const nodes = await fsPromises.readdir(dir, options).catch(err => {
+        console.log(err.message)
+        return []
+      })
 
-      if (node.isDirectory()) {
-        dirs.push(nodePath)
-      } else if (node.isFile()) {
-        files.push(nodePath)
-      }
-    })
+      nodes.forEach((node) => {
+        const nodePath = `${dir}/${node.name}`
 
-    const nestedFiles = await Promise.all(dirs.map(dir => this.readDir(dir)))
-    return files.concat(...nestedFiles)
+        // Filter ignored files
+        const relativeToRootPath = path.relative(self.engineCtx.repoPath, nodePath)
+        if (self.gitIgnoreManager.ignores(relativeToRootPath)) {
+          return
+        }
+
+        if (node.isDirectory()) {
+          dirs.push(nodePath)
+        } else if (node.isFile()) {
+          files.push(nodePath)
+        }
+      })
+
+      const nestedFiles = await Promise.all(dirs.map(subDir => readDirRecursive(subDir)))
+      return files.concat(...nestedFiles)
+    }
+
+    const allFiles = await readDirRecursive(dirPath)
+    return allFiles
   }
 
   /**
@@ -82,7 +92,9 @@ class File {
     const { repoPath } = this.engineCtx
 
     // Process ignoreDirs
-    this.gitIgnoreManager.add(ignoreDirs)
+    if (ignoreDirs) {
+      this.gitIgnoreManager.add(ignoreDirs)
+    }
 
     // Process .gitignore file
     if (!gitIgnoreFilePath) {
@@ -94,7 +106,7 @@ class File {
     })
     if (gitIgnoreFile) {
       console.log(`The .gitignore file: ${ignoreFileAbsolutePath} found.`)
-      console.log('All files and dirs listed in the file will be ignored.')
+      console.log('All files and dirs listed in .gitignore file will be ignored.')
     }
     this.gitIgnoreManager.add(gitIgnoreFile)
   }

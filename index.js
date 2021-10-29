@@ -38,4 +38,5 @@ if (validateCliOptions(cliOptions) > 0) {
 
 const finalConfig = { ...defaultConfig, ...cliOptions }
 const engine = new Engine(finalConfig)
+Object.seal(engine)
 engine.run()
