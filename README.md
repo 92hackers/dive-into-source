@@ -31,7 +31,7 @@ Being a software & hardware engineer, most of our carrer time will spend on read
 
 When i view linux kernel source code, it's too hard to understand kernel which has more than 18 million lines of code.
 
-so i search with google, willing to find a better tool to help me. sadly, existing tools either bad or just expensive,
+so i searched with google, willing to find a better tool to help me. sadly, existing tools either bad or just expensive,
 
 besides, all of them have bad UI and very complex.
 

@@ -20,6 +20,7 @@ const config = {
   },
   ignoreDirs: ['.git'], // Or parse ignore dirs from .gitignore file
   gitIgnoreFilePath: '.gitignore', // The path for .gitignore file
+  configDir: '~/.divesource/',
 }
 
 module.exports = config
