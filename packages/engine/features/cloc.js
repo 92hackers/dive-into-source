@@ -25,14 +25,88 @@ class ClocFeature {
     }
   }
 
+  jsonReport() {
+    const statsDataPairsArray = Array.from(this.stats.entries())
+    // Format of data pair: [language, linesCountDataObj]
+    statsDataPairsArray.sort((data1, data2) => data2[1].codeLinesCount - data1[1].codeLinesCount)
+    return statsDataPairsArray
+  }
+
+  _cliTableTpl(languageStats, totalStats) {
+    const firstColumnWidth = 20
+    const subColumnWidth = 15
+
+    const wrapContentWithLines = (content) => `
+--------------------------------------------------------------------------------
+${content}
+--------------------------------------------------------------------------------
+`
+    const languageColumn = 'Language'.padEnd(firstColumnWidth)
+    const filesColumn = 'files'.padStart(subColumnWidth)
+    const blankColumn = 'blank'.padStart(subColumnWidth)
+    const commentColumn = 'comment'.padStart(subColumnWidth)
+    const codeColumn = 'code'.padStart(subColumnWidth)
+    const caption = languageColumn + filesColumn + blankColumn + commentColumn + codeColumn
+    const header = wrapContentWithLines(caption)
+
+    let body = ''
+    languageStats.forEach(({
+      language, filesCount, blankLinesCount,
+      commentLinesCount, codeLinesCount,
+    }) => {
+      const line = language.padEnd(firstColumnWidth)
+      + filesCount.toString().padStart(subColumnWidth)
+      + blankLinesCount.toString().padStart(subColumnWidth)
+      + commentLinesCount.toString().padStart(subColumnWidth)
+      + codeLinesCount.toString().padStart(subColumnWidth)
+      body += `${line}\n`
+    })
+
+    body = body.replace(/\n$/, '') // Remove last \n char
+
+    const footerContent = 'Total'.padEnd(firstColumnWidth)
+    + totalStats.files.toString().padStart(subColumnWidth)
+    + totalStats.blank.toString().padStart(subColumnWidth)
+    + totalStats.comment.toString().padStart(subColumnWidth)
+    + totalStats.code.toString().padStart(subColumnWidth)
+    const footer = wrapContentWithLines(footerContent)
+
+    return header + body + footer
+  }
+
+  cliTableReport() {
+    const stats = this.jsonReport()
+    const { languageStats, totalStats } = stats.reduce((accum, stat) => {
+      const statsData = stat[1]
+      const {
+        filesCount, blankLinesCount, commentLinesCount, codeLinesCount,
+      } = statsData
+      accum.languageStats.push({
+        language: stat[0].padEnd(20),
+        filesCount,
+        blankLinesCount,
+        commentLinesCount,
+        codeLinesCount,
+      })
+      accum.totalStats.files += filesCount
+      accum.totalStats.blank += blankLinesCount
+      accum.totalStats.comment += commentLinesCount
+      accum.totalStats.code += codeLinesCount
+      return accum
+    }, {
+      languageStats: [],
+      totalStats: {
+        files: 0, blank: 0, comment: 0, code: 0,
+      },
+    })
+    console.log(this._cliTableTpl(languageStats, totalStats))
+  }
+
   /**
    * Report stats
    */
   report() {
-    const statsDataPairsArray = Array.from(this.stats.entries())
-    // Format of data pair: [language, linesCountDataObj]
-    statsDataPairsArray.sort((data1, data2) => data2[1].codeLinesCount - data1[1].codeLinesCount)
-    console.log(statsDataPairsArray)
+    this.cliTableReport()
   }
 
   async run({ matchLanguage, content }) {

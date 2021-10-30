@@ -81,8 +81,8 @@ class Engine {
   }
 
   report() {
-    this.summaryReport()
     this.featuresReport()
+    this.summaryReport()
   }
 
   summaryReport() {
