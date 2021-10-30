@@ -9,6 +9,8 @@
  *
  */
 
+const { formatNumber } = require('../../utils')
+
 class ClocFeature {
   constructor() {
     this.name = 'ClocFeature'
@@ -35,7 +37,6 @@ class ClocFeature {
   _cliTableTpl(languageStats, totalStats) {
     const firstColumnWidth = 20
     const subColumnWidth = 15
-
     const wrapContentWithLines = (content) => `
 --------------------------------------------------------------------------------
 ${content}
@@ -55,20 +56,20 @@ ${content}
       commentLinesCount, codeLinesCount,
     }) => {
       const line = language.padEnd(firstColumnWidth)
-      + filesCount.toString().padStart(subColumnWidth)
-      + blankLinesCount.toString().padStart(subColumnWidth)
-      + commentLinesCount.toString().padStart(subColumnWidth)
-      + codeLinesCount.toString().padStart(subColumnWidth)
+      + formatNumber(filesCount).padStart(subColumnWidth)
+      + formatNumber(blankLinesCount).padStart(subColumnWidth)
+      + formatNumber(commentLinesCount).padStart(subColumnWidth)
+      + formatNumber(codeLinesCount).padStart(subColumnWidth)
       body += `${line}\n`
     })
 
     body = body.replace(/\n$/, '') // Remove last \n char
 
     const footerContent = 'Total'.padEnd(firstColumnWidth)
-    + totalStats.files.toString().padStart(subColumnWidth)
-    + totalStats.blank.toString().padStart(subColumnWidth)
-    + totalStats.comment.toString().padStart(subColumnWidth)
-    + totalStats.code.toString().padStart(subColumnWidth)
+    + formatNumber(totalStats.files).padStart(subColumnWidth)
+    + formatNumber(totalStats.blank).padStart(subColumnWidth)
+    + formatNumber(totalStats.comment).padStart(subColumnWidth)
+    + formatNumber(totalStats.code).padStart(subColumnWidth)
     const footer = wrapContentWithLines(footerContent)
 
     return header + body + footer
