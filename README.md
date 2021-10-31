@@ -242,6 +242,6 @@ divesource .  2.96s user 0.52s system 165% cpu 2.102 total
 
 ### Benchmark summary
 
-![](./benchmark-plog.png)
+![](./benchmark-plot.png)
 
 Lower is better.
