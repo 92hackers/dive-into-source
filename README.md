@@ -10,6 +10,8 @@ Most important, it's beautiful.
 
 1. Count lines of code, total files, and ranking of folders based on including lines of code.
 
+See [Benchmark](#benchmark) for the performance compared to other similar tools.
+
 
 ### Advanced
 
@@ -62,3 +64,8 @@ that's why dive-into-source came out!
 
 
 ## Roadmap
+
+
+## Benchmark
+
+Cloc feature benchmark:

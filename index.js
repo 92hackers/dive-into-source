@@ -27,7 +27,7 @@ const defaultRepoPath = './' // Default, We analyze files of curent dir
 const { version } = packageJson
 
 const printHelpMessage = () => `
-Usage: divesource [OPTIONS] repo-path
+Usage: divesource [OPTIONS] path-of-codebase
 
 A tool to help you analyze youre code base.
 Visit: https://github.com/92hackers/dive-into-source to get more details.
@@ -65,8 +65,8 @@ function processArgs(argv) {
 
   return {
     ...cliOptions,
-    configDir: argv.config,
-    debug: argv.debug,
+    configDir: argv.config || {},
+    debug: argv.debug || false,
     signal: argv.signal,
     port: argv.port,
     address: argv.address,
