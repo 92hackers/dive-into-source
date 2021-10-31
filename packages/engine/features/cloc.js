@@ -62,7 +62,6 @@ ${content}
       + formatNumber(codeLinesCount).padStart(subColumnWidth)
       body += `${line}\n`
     })
-
     body = body.replace(/\n$/, '') // Remove last \n char
 
     const footerContent = 'Total'.padEnd(firstColumnWidth)
