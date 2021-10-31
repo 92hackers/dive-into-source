@@ -210,7 +210,7 @@ gocloc .  1.34s user 0.24s system 154% cpu 1.023 total
 ```bash
 $ time divesource .
 
-The .gitignore file: ./Kubernetes/.gitignore found.
+The .gitignore file: ./.gitignore found.
 All files and dirs listed in .gitignore file will be ignored.
 Total 23364 files found, start analyzing...
 ClocFeature -----------------
@@ -244,4 +244,4 @@ divesource .  2.96s user 0.52s system 165% cpu 2.102 total
 
 ![](./benchmark-plog.png)
 
-Smaller is better.
+Lower is better.
