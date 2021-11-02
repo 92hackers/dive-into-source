@@ -24,6 +24,44 @@ See [Benchmark](#benchmark) for the performance compared to other similar tools.
 1. Parse repo git data.
 2. Full-text fuzzy search in code.
 
+## Getting Started
+
+To try dive-into-source, your system should have `Node.js` installed,
+
+View [Node.js Downloads](https://nodejs.org/en/download/) for more details.
+
+### How to install?
+
+```bash
+npm install -g dive-into-source
+```
+
+or with `yarn`:
+
+```bash
+yarn global add dive-into-source
+```
+
+### Usage
+
+Once installed, there should be a executable binary file called `divesource` existed
+
+in your npm `bin` directory, just execute it:
+
+```bash
+divesource [codebase]
+```
+
+If `codebase` parameter omitted, the current directory will become the codebase.
+
+There are many options to config behaviour of `divesource`, just type:
+
+```bash
+divesource -h
+```
+
+to see all of them.
+
 
 ## Why the project?
 
@@ -44,20 +82,11 @@ Besides, all of them have bad UI and being very complex, that's why dive-into-so
 1. Fully extensible. you can write your own language to be accepted by dive-into-source. Besides, you can even write your own analyze feature.
 
 
-
-## Getting Started
-
 ### Concepts:
 
 1. dive-into-source: All in one library to start with the project
 2. dive-into-source-engine: The engine library to analyze source code
 3. dive-into-source-visual: The default visual website to render generated data by engine
-
-
-### How to install?
-
-
-### Usage
 
 
 ## Roadmap
