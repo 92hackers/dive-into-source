@@ -1,8 +1,6 @@
 # Dive Into Source
 
-A stupid simple, powerful source code analyzer, targeting help you understand repo source code as quickly as possible.
-
-Most important, it's beautiful.
+A stupid simple, powerful source code analyzer, targeting help you understand codebase as quickly as possible.
 
 ## Features
 
@@ -10,13 +8,13 @@ Most important, it's beautiful.
 
 1. Count lines of code, total files, and ranking of folders based on including lines of code.
 
-See [Benchmark](#benchmark) for the performance compared to other similar tools.
+Dive-into-source owns high performance, See [Benchmark](#benchmark) for the performance compared with other similar tools.
 
 
 ### Advanced
 
-1. Generate calling-link between all functions or methods
-2. Generate data objects
+1. Generate calling-graph between all functions or methods
+2. Generate dataStructure-definitions-graph of all codebase modules
 
 
 ### Ultimate
@@ -60,7 +58,7 @@ There are many options to config behaviour of `divesource`, just type:
 divesource -h
 ```
 
-to see all of them.
+to view all of them.
 
 
 ## Why the project?
